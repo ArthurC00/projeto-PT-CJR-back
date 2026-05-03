@@ -1,0 +1,121 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+model Usuario { 
+  id                      Int      @id @default (autoincrement())
+  username                String   @db.VarChar(50) @unique 
+  email                   String   @db.VarChar(255) @unique
+  senha_hash              String   @db.VarChar(255)
+  foto_perfil_url         String   @db.VarChar(255)
+  lojas                   lojas[]  @relation("donoDaLoja") 
+  avaliacoes_loja         avaliacoes_loja[] @relation("avaliacoesUsuarioLoja")
+  avaliacoes_produto      avaliacoes_produto[] @relation("avaliacoesUsuarioProdutos")
+  comentarios_avaliacao   comentarios_avaliacao[] @relation("comentariosAvaliacoes")
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+
+
+}
+
+model lojas {
+  id          Int @id @default(autoincrement())
+  usuario_id  Int @unique
+  usuario     Usuario @relation("donoDaLoja", fields: [usuario_id], references: [id])
+  nome        String  @db.VarChar(255)
+  descricao   String  
+  logo_url    String  @db.VarChar(255)
+  banner_url  String  @db.VarChar(255)
+  sticker_url String  @db.VarChar(255)
+  avaliacoes  avaliacoes_loja[] @relation("avaliacoesDaLoja")
+  produtos    produtos[] @relation("produtosDaLoja") 
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt 
+
+}
+
+model avaliacoes_loja {
+  id          Int @id @default(autoincrement())
+  usuario_id  Int @unique
+  usuario     Usuario @relation("avaliacoesUsuarioLoja", fields: [usuario_id],references: [id])
+  loja_id     Int @unique 
+  loja        lojas @relation("avaliacoesDaLoja", fields: [loja_id], references: [id])
+  nota        Float
+  avaliacao   String
+  comentarios comentarios_avaliacao[] @relation("comentariosAvaliacaoLoja")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+}
+
+model produtos {
+  id              Int @id @default(autoincrement())
+  loja_id         Int @unique
+  loja            lojas @relation("produtosDaLoja", fields: [loja_id], references: [id])
+  nome            String @db.VarChar(255)
+  preco           Float
+  descricao       String
+  avaliacoes      avaliacoes_produto[] @relation("ProdutoAvaliado")
+  estoque         Int
+  imagens         imagens_produto[] @relation("imagens_produto")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+}
+
+model avaliacoes_produto {
+  id              Int @id @default(autoincrement())
+  usuario_id      Int @unique
+  usuario         Usuario @relation("avaliacoesUsuarioProdutos", fields: [usuario_id], references: [id])
+  produto_id      Int @unique
+  produto         produtos @relation("ProdutoAvaliado", fields: [produto_id], references: [id])
+  comentarios     comentarios_avaliacao[] @relation("comentariosAvaliacaoProdutos")
+  nota            Float 
+  conteudo        String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+}
+
+model categorias { //náo entendi essa parte 
+  id                  Int @id @default(autoincrement())
+  nome                String @db.VarChar(100)
+  tipos               categorias[] @relation("categoria")
+  categodria_pai_id   Int
+  categoria           categorias @relation("categoria", fields: [categodria_pai_id], references: [id])
+
+}
+
+model imagens_produto {
+  id                 Int @id @default(autoincrement())
+  produto_id         Int @unique
+  produto            produtos @relation ("imagens_produto", fields: [produto_id], references: [id])
+  url_imagem         String @db.VarChar(255)
+  ordem              Int 
+}
+
+model comentarios_avaliacao {
+  id                      Int @id @default(autoincrement())
+  usuario_id              Int @unique  
+  usuario                 Usuario @relation("comentariosAvaliacoes", fields: [usuario_id], references: [id])
+  avaliacao_loja_id       Int  
+  avaliacao_loja          avaliacoes_loja @relation("comentariosAvaliacaoLoja", fields: [avaliacao_loja_id], references: [id])
+  avaliacao_produto_id    Int 
+  avaliacao_produto       avaliacoes_produto @relation("comentariosAvaliacaoProdutos", fields: [avaliacao_produto_id], references: [id])
+  conteudo                String 
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+
+}
+
