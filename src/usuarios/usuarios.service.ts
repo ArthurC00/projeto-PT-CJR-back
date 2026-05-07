@@ -25,19 +25,50 @@ export class UsuariosService {
     });
   }
 
-  findAll() {
-    return `This action returns all usuarios`;
+  async findAll() {
+    return await this.prisma.usuario.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} usuario`;
+  async findOne(id: number) {
+    const userExist = await this.prisma.usuario.findUnique({ where: { id } });
+
+    if (!userExist)
+      throw new BadRequestException('Id inválido! O usuário não existe');
+
+    return userExist;
   }
 
-  update(id: number, updateUsuarioDto: UpdateUsuarioDto) {
-    return `This action updates a #${id} usuario`;
+  async update(id: number, updateUsuarioDto: UpdateUsuarioDto) {
+    const userExist = this.prisma.usuario.findUnique({ where: { id } });
+
+    if (!userExist)
+      throw new BadRequestException('Id inválido! O usuário não existe');
+
+    const data = { ...updateUsuarioDto };
+
+    if (data.senha_hash) {
+      data.senha_hash = await bcrypt.hash(data.senha_hash, 10);
+    }
+
+    return this.prisma.usuario.update({
+      where: { id },
+      data: data,
+      select: {
+        id: true,
+        nome: true,
+        email: true,
+        username: true,
+        foto_perfil_url: true,
+      },
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} usuario`;
+  async remove(id: number) {
+    const userExist = await this.prisma.usuario.findUnique({ where: { id } });
+
+    if (!userExist)
+      throw new BadRequestException('Id inválido! O usuário não existe');
+
+    return this.prisma.usuario.delete({ where: { id } });
   }
 }
