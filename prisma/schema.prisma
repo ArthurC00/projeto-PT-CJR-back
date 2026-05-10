@@ -8,7 +8,7 @@ datasource db {
 }
 
 
-model Usuario { 
+model Usuario { //ody() c
   id                      Int      @id @default (autoincrement())
   username                String   @db.VarChar(50) @unique
   nome                    String   @db.VarChar(255)
