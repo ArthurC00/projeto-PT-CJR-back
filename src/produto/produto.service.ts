@@ -18,18 +18,37 @@ export class ProdutoService {
 
   async findAll() {
     const produto = await this.prisma.produtos.findMany
-    return `This action returns all produto`;
+    return produto;
+  
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} produto`;
+  async findOne(id: number) {
+    const produto = await this.prisma.produtos.findUnique({
+      where:{id}
+    })
+    return produto;
+
   }
 
-  update(id: number, updateProdutoDto: UpdateProdutoDto) {
-    return `This action updates a #${id} produto`;
+  async update(id: number, updateProdutoDto: UpdateProdutoDto) {
+    const produto = this.findOne(id);
+    if (!produto){ 
+      throw new Error;
+    }
+    return await this.prisma.produtos.update ({
+      where:{id},
+      data:{...updateProdutoDto}
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} produto`;
+  async remove(id: number) {
+    const produto = this.findOne(id);
+    if (!produto){ 
+      throw new Error;
+    }
+
+    return await this.prisma.produtos.delete ({
+      where:{id},
+    });
   }
 }
