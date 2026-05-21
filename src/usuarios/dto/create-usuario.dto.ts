@@ -25,5 +25,5 @@ export class CreateUsuarioDto {
   @MaxLength(255, {
     message: 'A url da foto de perfil pode ter no máximo 255 caracteres',
   })
-  foto_perfil_url!: string;
+  foto_perfil_url?: string;
 }
