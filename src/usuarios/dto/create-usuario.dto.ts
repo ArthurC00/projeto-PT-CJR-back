@@ -27,4 +27,3 @@ export class CreateUsuarioDto {
   })
   foto_perfil_url?: string;
 }
-
