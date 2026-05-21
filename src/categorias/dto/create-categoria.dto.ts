@@ -1,7 +1,7 @@
 // "o que precisa ter pra criar uma categoria?" - primeira coisa que se faz no CRUD
 // colocar o que tem no schema prisma, 
 
-import { IsNotEmpty, IsNumber, IsString, MaxLength } from "class-validator"
+import { IsNotEmpty, IsNumber, IsOptional, IsString, MaxLength } from "class-validator"
 
 export class CreateCategoriaDto {
 
@@ -23,6 +23,7 @@ export class CreateCategoriaDto {
   @MaxLength(100)
   nome!: string
 
+  @IsOptional()
   @IsNumber()
   categoria_pai_id?: number
 
