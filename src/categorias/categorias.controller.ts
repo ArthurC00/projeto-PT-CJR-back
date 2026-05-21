@@ -18,18 +18,18 @@ export class CategoriasController {
   constructor(private readonly categoriasService: CategoriasService) {}
 
   @Post()
-  create(@Body() createCategoriaDto: CreateCategoriaDto) {
-    return this.categoriasService.create(createCategoriaDto);
+  async create(@Body() createCategoriaDto: CreateCategoriaDto) {
+    return await this.categoriasService.create(createCategoriaDto);
   }
 
   @Get()
-  findAll() {
-    return this.categoriasService.findAll();
+  async findAll() {
+    return await this.categoriasService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.categoriasService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    return await this.categoriasService.findOne(+id);
   }
 
   @Patch(':id')
@@ -37,12 +37,13 @@ export class CategoriasController {
     @Param('id') id: string,
     @Body() updateCategoriaDto: UpdateCategoriaDto,
   ) {
-    return this.categoriasService.update(+id, updateCategoriaDto);
+    return await this.categoriasService.update(+id, updateCategoriaDto);
+    // estava sem o await, o que estava fazendo a conexão encerrar antes de mostrar o erro caso a categoria a ser atualizada não fosse encontrada
   }
 
   @Delete(':id')
   @UseGuards(AuthGuard('jwt'))
-  remove(@Param('id') id: string) {
-    return this.categoriasService.remove(+id);
+  async remove(@Param('id') id: string) {
+    return await this.categoriasService.remove(+id);
   }
 }
