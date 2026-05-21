@@ -68,8 +68,10 @@ export class CategoriasService {
   
   }
 
-  findAll() {
-    return `This action returns all categorias`;
+  async findAll() {
+    // o método assíncrono (async) é necessário porque a função precisa buscar no banco de dados
+    return  await this.prisma.categorias.findMany();
+    // o await faz com que a função espere a resposta do banco de dados antes de retornar os resultados da busca
   }
 
   findOne(id: number) {
