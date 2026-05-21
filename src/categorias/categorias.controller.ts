@@ -23,19 +23,16 @@ export class CategoriasController {
   }
 
   @Get()
-  @UseGuards(AuthGuard('jwt'))
   findAll() {
     return this.categoriasService.findAll();
   }
 
   @Get(':id')
-  @UseGuards(AuthGuard('jwt'))
   findOne(@Param('id') id: string) {
     return this.categoriasService.findOne(+id);
   }
 
   @Patch(':id')
-  @UseGuards(AuthGuard('jwt'))
   async update(
     @Param('id') id: string,
     @Body() updateCategoriaDto: UpdateCategoriaDto,
