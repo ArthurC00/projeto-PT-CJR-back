@@ -18,29 +18,25 @@ export class CategoriasController {
   constructor(private readonly categoriasService: CategoriasService) {}
 
   @Post()
-  // @UseGuards(AuthGuard('jwt'))
-  // desativado para teste
+  @UseGuards(AuthGuard('jwt'))
   async create(@Body() createCategoriaDto: CreateCategoriaDto) {
     return await this.categoriasService.create(createCategoriaDto);
   }
 
   @Get()
-  // @UseGuards(AuthGuard('jwt'))
-  // desativado para teste
+  @UseGuards(AuthGuard('jwt'))
   async findAll() {
     return await this.categoriasService.findAll();
   }
 
   @Get(':id')
-  // @UseGuards(AuthGuard('jwt'))
-  // desativado para teste
+  @UseGuards(AuthGuard('jwt'))
   async findOne(@Param('id') id: string) {
     return await this.categoriasService.findOne(+id);
   }
 
   @Patch(':id')
-  // @UseGuards(AuthGuard('jwt'))
-  // desativado para teste
+  @UseGuards(AuthGuard('jwt'))
   async update(
     @Param('id') id: string,
     @Body() updateCategoriaDto: UpdateCategoriaDto,
@@ -50,8 +46,7 @@ export class CategoriasController {
   }
 
   @Delete(':id')
-  // @UseGuards(AuthGuard('jwt'))
-  // desativado para teste
+  @UseGuards(AuthGuard('jwt'))
   async remove(@Param('id') id: string) {
     return await this.categoriasService.remove(+id);
   }
