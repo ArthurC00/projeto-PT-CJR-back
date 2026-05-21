@@ -1,10 +1,17 @@
 import { IsInt, IsNotEmpty, IsNumber, IsString} from 'class-validator';
 export class CreateAvaliacoesProdutoDto {
 
+@IsInt()
+@IsNotEmpty()
+id!: number;
 
 @IsInt()
 @IsNotEmpty()
 usuario_id!: number;
+
+@IsInt()
+@IsNotEmpty()
+loja_id!: number;
 
 @IsInt()
 @IsNotEmpty()
