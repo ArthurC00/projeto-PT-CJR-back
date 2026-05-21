@@ -88,8 +88,15 @@ export class CategoriasService {
     return categoriaEncontrada;
   }
 
-  update(id: number, updateCategoriaDto: UpdateCategoriaDto) {
-    return `This action updates a #${id} categoria`;
+  async update(id: number, updateCategoriaDto: UpdateCategoriaDto) {
+    // primeiro, verifica se a categoria existe, usando a função findOne que eu criei (já tem código de erro)
+     await this.findOne(id);
+
+    return await this.prisma.categorias.update({
+      where: { id },
+      data: { ...updateCategoriaDto }
+      // os três pontos dizem ao JavaScript para "descompactar" o DTO e usar as informações que ele contém como data
+    });
   }
 
   remove(id: number) {
