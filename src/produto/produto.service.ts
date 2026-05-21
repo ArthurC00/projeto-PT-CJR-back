@@ -17,7 +17,7 @@ export class ProdutoService {
 }
 
   async findAll() {
-    const produto = await this.prisma.produtos.findMany
+    const produto = await this.prisma.produtos.findMany()
     return produto;
   
   }
