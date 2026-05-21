@@ -99,7 +99,12 @@ export class CategoriasService {
     });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} categoria`;
+  async remove(id: number) {
+    // verifica se a categoria existe
+    await this.findOne(id);
+    // deleta a categoria com o id especificado
+    return await this.prisma.categorias.delete({
+      where: { id }
+    });
   }
 }
