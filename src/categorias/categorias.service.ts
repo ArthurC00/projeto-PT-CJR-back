@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCategoriaDto } from './dto/create-categoria.dto';
 import { UpdateCategoriaDto } from './dto/update-categoria.dto';
 import { PrismaService } from '../../prisma/prisma.service';
@@ -22,7 +22,7 @@ export class CategoriasService {
     if (categoria_pai_id) {
       // só executa se o usuário tiver enviado um ID de categoria pai (que é opcional)
       
-      const paiExiste = await this.prisma.categorias.findFirst({
+      const paiExiste = await this.prisma.categorias.findUnique({
         // checa se a categoria pai enviada existe
         where: { id: categoria_pai_id}
       });
@@ -69,13 +69,23 @@ export class CategoriasService {
   }
 
   async findAll() {
+    // retorna um array com todas as categorias existentes no banco de dados
     // o método assíncrono (async) é necessário porque a função precisa buscar no banco de dados
     return  await this.prisma.categorias.findMany();
     // o await faz com que a função espere a resposta do banco de dados antes de retornar os resultados da busca
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} categoria`;
+  async findOne(id: number) {
+    // procura por uma categoria com o ID fornecido
+    const categoriaEncontrada = await this.prisma.categorias.findUnique({
+      where: { id }
+    });
+    if (!categoriaEncontrada) {
+      // se não encontrar, mostra uma mensagem de erro
+      throw new NotFoundException("Categoria não encontrada.")
+    }
+    // se encontrar, retorna a categoria encontrada
+    return categoriaEncontrada;
   }
 
   update(id: number, updateCategoriaDto: UpdateCategoriaDto) {
