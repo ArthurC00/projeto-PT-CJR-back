@@ -13,17 +13,37 @@ export class ProdutoService {
       data: {
         ...createProdutoDto,
       },
+      select: { createdAt: true },
     });
   }
 
   async findAll() {
-    const produto = await this.prisma.produtos.findMany()
+    const produto = await this.prisma.produtos.findMany({
+      select: {
+        id: true,
+        nome: true,
+        preco: true,
+        estoque: true,
+        descricao: true,
+        loja_id: true,
+        categoria_id: true,
+      },
+    });
     return produto;
   }
 
   async findOne(id: number) {
     const produto = await this.prisma.produtos.findUnique({
       where: { id },
+      select: {
+        id: true,
+        nome: true,
+        preco: true,
+        estoque: true,
+        descricao: true,
+        loja_id: true,
+        categoria_id: true,
+      },
     });
     return produto;
   }

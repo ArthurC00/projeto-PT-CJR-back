@@ -1,4 +1,10 @@
-import { IsEmail, IsNotEmpty, IsString, MaxLength } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  MaxLength,
+} from 'class-validator';
 
 export class CreateUsuarioDto {
   @IsString()
@@ -22,6 +28,7 @@ export class CreateUsuarioDto {
   senha_hash!: string;
 
   @IsString()
+  @IsOptional()
   @MaxLength(255, {
     message: 'A url da foto de perfil pode ter no máximo 255 caracteres',
   })
