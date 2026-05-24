@@ -9,11 +9,11 @@ dotenv.config();
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit {
   constructor() {
-    const connectionString = process.env.DATABASE_URL;
+    const connectionString = process.env["DATABASE_URL"]!;
 
-    if (!connectionString) {
-      console.error('DATABASE_URL não encontrada');
-    }
+    //if (!connectionString) {
+    //  console.error('DATABASE_URL não encontrada');
+    //}
 
     const pool = new Pool({ connectionString });
     const adapter = new PrismaPg(pool);
@@ -24,3 +24,5 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     await this.$connect();
   }
 }
+
+
