@@ -11,13 +11,11 @@ generator prismaClassGenerator {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
-  
 }
 
 
 model Usuario { 
-  id                      Int      @id @default (autoincrement())
+  id                      Int      @id @default(autoincrement())
   username                String   @db.VarChar(50) @unique
   nome                    String   @db.VarChar(255)
   email                   String   @db.VarChar(255) @unique

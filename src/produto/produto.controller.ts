@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { ProdutoService } from './produto.service';
 import { CreateProdutoDto } from './dto/create-produto.dto';
@@ -18,6 +19,11 @@ export class ProdutoController {
   @Post()
   create(@Body() createProdutoDto: CreateProdutoDto) {
     return this.produtoService.create(createProdutoDto);
+  }
+
+   @Get('search')
+  search(@Query('q') query: string) {
+    return this.produtoService.searchProducts(query);
   }
 
   @Get()

@@ -48,6 +48,21 @@ export class ProdutoService {
     return produto;
   }
 
+    async searchProducts(query: string) {
+    if (!query || query.trim() === '') return [];
+
+    return this.prisma.produtos.findMany({
+      where: {
+        OR: [
+          { nome: { contains: query, mode: 'insensitive' } },
+          { descricao: { contains: query, mode: 'insensitive' } },
+        ],
+      },
+      take: 20, 
+      orderBy: { nome: 'asc' },
+    });
+  }
+
   async update(id: number, updateProdutoDto: UpdateProdutoDto) {
     const produto = this.findOne(id);
     if (!produto) {

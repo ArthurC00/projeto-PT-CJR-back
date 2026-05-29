@@ -17,5 +17,7 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": false,
     "types": ["node", "jest"]
+    
+    
   }
 }
