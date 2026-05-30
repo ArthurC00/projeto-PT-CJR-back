@@ -7,7 +7,6 @@ import {
   Param,
   Delete,
   UseGuards,
-  Req,
 } from '@nestjs/common';
 import { UsuariosService } from './usuarios.service';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
@@ -38,11 +37,8 @@ export class UsuariosController {
   async update(
     @Param('id') id: string,
     @Body() updateUsuarioDto: UpdateUsuarioDto,
-    @Req() req: any
   ) 
   {
-    console.log("ID da URL:", id)
-    console.log("ID do token:", req.user?.userId);
     return this.usuariosService.update(+id, updateUsuarioDto);
   }
 
