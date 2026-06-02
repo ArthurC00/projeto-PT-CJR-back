@@ -45,7 +45,15 @@ export class ComentariosAvaliacaoService {
   }
 
   findAll() {
-    return `This action returns all comentariosAvaliacao`;
+    return this.prisma.comentarios_avaliacao.findMany({
+      select: {
+        id: true,
+        usuario_id: true,
+        avaliacao_loja_id: true,
+        avaliacao_produto_id: true,
+        conteudo: true
+      }
+    })
   }
 
   findOne(id: number) {
