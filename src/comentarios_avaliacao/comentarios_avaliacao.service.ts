@@ -21,7 +21,7 @@ export class ComentariosAvaliacaoService {
       if(!avaliacaoExiste) {
         throw new BadRequestException("A avaliação de loja especificada não existe.")
       }
-      return this.prisma.comentarios_avaliacao.create({
+      return await this.prisma.comentarios_avaliacao.create({
         data: { conteudo, usuario_id, avaliacao_loja_id },
         select: { id: true, usuario_id: true, avaliacao_loja_id: true, conteudo: true }
       });
@@ -35,7 +35,7 @@ export class ComentariosAvaliacaoService {
         throw new BadRequestException("A avaliação de produto especificada não existe.")
       }
 
-      return this.prisma.comentarios_avaliacao.create({
+      return await this.prisma.comentarios_avaliacao.create({
         data: { conteudo, usuario_id, avaliacao_produto_id },
         select: { id: true, usuario_id: true, avaliacao_produto_id: true, conteudo: true }
       });
@@ -44,8 +44,8 @@ export class ComentariosAvaliacaoService {
     }
   }
 
-  findAll() {
-    return this.prisma.comentarios_avaliacao.findMany({
+  async findAll() {
+    return await this.prisma.comentarios_avaliacao.findMany({
       select: {
         id: true,
         usuario_id: true,
@@ -56,15 +56,15 @@ export class ComentariosAvaliacaoService {
     })
   }
 
-  findOne(id: number) {
+  async findOne(id: number) {
     return `This action returns a #${id} comentariosAvaliacao`;
   }
 
-  update(id: number, updateComentariosAvaliacaoDto: UpdateComentariosAvaliacaoDto) {
+  async update(id: number, updateComentariosAvaliacaoDto: UpdateComentariosAvaliacaoDto) {
     return `This action updates a #${id} comentariosAvaliacao`;
   }
 
-  remove(id: number) {
+  async remove(id: number) {
     return `This action removes a #${id} comentariosAvaliacao`;
   }
 }
