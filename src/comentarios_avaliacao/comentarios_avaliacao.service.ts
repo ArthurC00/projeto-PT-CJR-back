@@ -57,11 +57,43 @@ export class ComentariosAvaliacaoService {
   }
 
   async findOne(id: number) {
-    return `This action returns a #${id} comentariosAvaliacao`;
+    const comentarioExiste = await this.prisma.comentarios_avaliacao.findFirst({
+      where: { id },
+      select: {
+        id: true,
+        usuario_id: true,
+        avaliacao_loja_id: true,
+        avaliacao_produto_id: true,
+        conteudo: true
+      }
+    });
+
+    if (!comentarioExiste) {
+      throw new BadRequestException("Comentário não encontrado.")
+    }
+    return comentarioExiste;
   }
 
   async update(id: number, updateComentariosAvaliacaoDto: UpdateComentariosAvaliacaoDto) {
-    return `This action updates a #${id} comentariosAvaliacao`;
+    const comentarioExiste = await this.prisma.comentarios_avaliacao.findFirst({ where: {id}});
+
+    if (!comentarioExiste) {
+      throw new BadRequestException("Comentário não encontrado.");
+    }
+
+    const data = { ...updateComentariosAvaliacaoDto }
+
+    return await this.prisma.comentarios_avaliacao.update({
+      where: { id },
+      data: data,
+      select: {
+        id: true,
+        usuario_id: true,
+        avaliacao_loja_id: true,
+        avaliacao_produto_id: true,
+        conteudo: true
+      }
+    });
   }
 
   async remove(id: number) {
