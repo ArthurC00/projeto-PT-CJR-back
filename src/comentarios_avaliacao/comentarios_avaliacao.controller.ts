@@ -1,34 +1,40 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { ComentariosAvaliacaoService } from './comentarios_avaliacao.service';
 import { CreateComentariosAvaliacaoDto } from './dto/create-comentarios_avaliacao.dto';
 import { UpdateComentariosAvaliacaoDto } from './dto/update-comentarios_avaliacao.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('comentarios-avaliacao')
 export class ComentariosAvaliacaoController {
   constructor(private readonly comentariosAvaliacaoService: ComentariosAvaliacaoService) {}
 
   @Post()
-  create(@Body() createComentariosAvaliacaoDto: CreateComentariosAvaliacaoDto) {
-    return this.comentariosAvaliacaoService.create(createComentariosAvaliacaoDto);
+  @UseGuards(AuthGuard('jwt'))
+  async create(@Body() createComentariosAvaliacaoDto: CreateComentariosAvaliacaoDto) {
+    return await this.comentariosAvaliacaoService.create(createComentariosAvaliacaoDto);
   }
 
   @Get()
-  findAll() {
-    return this.comentariosAvaliacaoService.findAll();
+  @UseGuards(AuthGuard('jwt'))
+  async findAll() {
+    return await this.comentariosAvaliacaoService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.comentariosAvaliacaoService.findOne(+id);
+  @UseGuards(AuthGuard('jwt'))
+  async findOne(@Param('id') id: string) {
+    return await this.comentariosAvaliacaoService.findOne(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateComentariosAvaliacaoDto: UpdateComentariosAvaliacaoDto) {
-    return this.comentariosAvaliacaoService.update(+id, updateComentariosAvaliacaoDto);
+  @UseGuards(AuthGuard('jwt'))
+  async update(@Param('id') id: string, @Body() updateComentariosAvaliacaoDto: UpdateComentariosAvaliacaoDto) {
+    return await this.comentariosAvaliacaoService.update(+id, updateComentariosAvaliacaoDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.comentariosAvaliacaoService.remove(+id);
+  @UseGuards(AuthGuard('jwt'))
+  async remove(@Param('id') id: string) {
+    return await this.comentariosAvaliacaoService.remove(+id);
   }
 }
