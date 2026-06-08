@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProdutoDto } from './dto/create-produto.dto';
 import { UpdateProdutoDto } from './dto/update-produto.dto';
 import { PrismaService } from '../../prisma/prisma.service';
@@ -18,7 +18,7 @@ export class ProdutoService {
   }
 
   async findAll() {
-    const produto = await this.prisma.produtos.findMany({
+    return await this.prisma.produtos.findMany({
       select: {
         id: true,
         nome: true,
@@ -27,9 +27,16 @@ export class ProdutoService {
         descricao: true,
         loja_id: true,
         categoria_id: true,
+        imagens: {
+          orderBy: { ordem: 'asc' },
+          select: {
+            id: true,
+            url_imagem: true,
+            ordem: true,
+          },
+        },
       },
     });
-    return produto;
   }
 
   async findOne(id: number) {
@@ -43,16 +50,36 @@ export class ProdutoService {
         descricao: true,
         loja_id: true,
         categoria_id: true,
+        categoria: {
+          select: {
+            nome: true,
+          },
+        },
+        imagens: {
+          orderBy: { ordem: 'asc' },
+          select: {
+            id: true,
+            url_imagem: true,
+            ordem: true,
+          },
+        },
       },
     });
+
+    if (!produto) {
+      throw new NotFoundException(`Produto com ID ${id} não encontrado.`);
+    }
+
     return produto;
   }
 
   async update(id: number, updateProdutoDto: UpdateProdutoDto) {
-    const produto = this.findOne(id);
+    const produto = await this.findOne(id);
+
     if (!produto) {
-      throw new Error();
+      throw new NotFoundException(`Produto com ID ${id} não encontrado.`);
     }
+
     return await this.prisma.produtos.update({
       where: { id },
       data: { ...updateProdutoDto },
@@ -60,9 +87,10 @@ export class ProdutoService {
   }
 
   async remove(id: number) {
-    const produto = this.findOne(id);
+    const produto = await this.findOne(id);
+
     if (!produto) {
-      throw new Error();
+      throw new NotFoundException(`Produto com ID ${id} não encontrado.`);
     }
 
     return await this.prisma.produtos.delete({
