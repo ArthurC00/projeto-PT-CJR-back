@@ -29,8 +29,6 @@
 
 ```bash
 $ npm install
-
-$ npm run setup
 ```
 
 ## Compile and run the project
@@ -44,14 +42,6 @@ $ npm run start:dev
 
 # production mode
 $ npm run start:prod
-```
-
-## Sync Postgress
-
-```bash
-#sync database if schema.primsa is modified
-$ npm run db:sync
-
 ```
 
 ## Run tests
