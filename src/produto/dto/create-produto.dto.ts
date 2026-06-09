@@ -26,5 +26,4 @@ preco!: number;
 @IsNotEmpty()
 @MaxLength(255, {message: 'O preço da loja pode ter no máximo 255 caracteres' })
 descricao!: string;
-
 }
