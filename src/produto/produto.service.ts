@@ -8,10 +8,22 @@ export class ProdutoService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createProdutoDto: CreateProdutoDto) {
-    console.log(createProdutoDto);
+    const { imagens, ...produtoData } = createProdutoDto;
+
     return await this.prisma.produtos.create({
       data: {
-        ...createProdutoDto,
+        ...produtoData, // Passa os campos normais
+
+        ...(imagens && imagens.length > 0
+          ? {
+              imagens: {
+                create: imagens.map((url, index) => ({
+                  url_imagem: url,
+                  ordem: index + 1,
+                })),
+              },
+            }
+          : {}),
       },
       select: { createdAt: true },
     });
@@ -74,15 +86,24 @@ export class ProdutoService {
   }
 
   async update(id: number, updateProdutoDto: UpdateProdutoDto) {
-    const produto = await this.findOne(id);
-
-    if (!produto) {
-      throw new NotFoundException(`Produto com ID ${id} não encontrado.`);
-    }
+    const { imagens, ...produtoData } = updateProdutoDto;
 
     return await this.prisma.produtos.update({
       where: { id },
-      data: { ...updateProdutoDto },
+      data: {
+        ...produtoData,
+        ...(imagens
+          ? {
+              imagens: {
+                deleteMany: {},
+                create: imagens.map((url, index) => ({
+                  url_imagem: url,
+                  ordem: index + 1,
+                })),
+              },
+            }
+          : {}),
+      },
     });
   }
 
