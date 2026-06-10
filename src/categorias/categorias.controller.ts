@@ -38,6 +38,11 @@ export class CategoriasController {
     return await this.categoriasService.findOne(+id);
   }
 
+  @Get(':id/produtos')
+  async findOneWithProducts(@Param('id') id: string) {
+    return await this.categoriasService.findOneWithProducts(+id);
+  }
+
   @Patch(':id')
   @UseGuards(AuthGuard('jwt'))
   async update(
