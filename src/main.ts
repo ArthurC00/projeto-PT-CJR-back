@@ -13,6 +13,11 @@ async function bootstrap() {
     }),
   );
   app.enableCors();
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+>>>>>>> 7675eb95d938174dc7e35f843f9974a58cf62372
 
   const config = new DocumentBuilder()
     .setTitle('Minha API NestJS')
@@ -28,6 +33,10 @@ async function bootstrap() {
     jsonDocumentUrl: '/api/json',
   });
 
+<<<<<<< HEAD
+=======
+>>>>>>> 188d21de862784032c46454aff52b3b85bfdf177
+>>>>>>> 7675eb95d938174dc7e35f843f9974a58cf62372
   await app.listen(process.env.PORT ?? 3001);
 }
 bootstrap();
