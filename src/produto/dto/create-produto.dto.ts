@@ -7,8 +7,6 @@ import {
   IsArray,
   IsOptional,
   ValidateNested,
-  IsOptional,
-  IsArray,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -21,8 +19,6 @@ class ImagemDto {
   @IsNotEmpty()
   ordem!: number;
 }
-
-import { Type } from 'class-transformer';
 
 export class CreateProdutoDto {
   @IsString()
