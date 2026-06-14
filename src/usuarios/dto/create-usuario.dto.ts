@@ -4,6 +4,7 @@ import {
   IsOptional,
   IsString,
   MaxLength,
+  MinLength,
 } from 'class-validator';
 
 export class CreateUsuarioDto {
@@ -24,6 +25,7 @@ export class CreateUsuarioDto {
 
   @IsString()
   @IsNotEmpty()
+  @MinLength(8, {message: 'A senha deve conter no mínimo 8 caracteres!'})
   @MaxLength(255, { message: 'A senha pode ter no máximo 255 caracteres' })
   senha_hash!: string;
 
