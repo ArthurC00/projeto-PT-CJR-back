@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
   UseInterceptors,
   UploadedFiles,
 } from '@nestjs/common';
@@ -45,6 +46,11 @@ export class ProdutoController {
     }
 
     return this.produtoService.create(createProdutoDto);
+  }
+
+  @Get('search')
+  search(@Query('q') query: string) {
+    return this.produtoService.searchProducts(query);
   }
 
   @Get()

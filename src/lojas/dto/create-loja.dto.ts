@@ -1,7 +1,15 @@
-import { isNotEmpty, IsNotEmpty, IsString, isString, MaxLength } from "class-validator";
+import {
+  IsInt,
+  isNotEmpty,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  isString,
+  MaxLength,
+} from 'class-validator';
 
 export class CreateLojaDto {
-    /*id          Int     @id @default(autoincrement())
+  /*id          Int     @id @default(autoincrement())
 
   usuario_id  Int
   usuario     Usuario           @relation("donoDaLoja", fields: [usuario_id], references: [id])
@@ -17,25 +25,27 @@ export class CreateLojaDto {
 
   avaliacoes  avaliacoes_loja[] @relation("avaliacoesDaLoja")
   produtos    produtos[]        @relation("produtosDaLoja")*/
-  
+  @IsInt()
+  @IsNumber()
+  usuario_id!: number;
+
   @IsString()
   @IsNotEmpty()
   @MaxLength(255)
-  nome!: String;
+  nome!: string;
 
   @IsString()
-  descricao!: String;
+  descricao!: string;
 
   @IsString()
-  @MaxLength(255)  
-  logo_url!: String;
+  @MaxLength(255)
+  logo_url!: string;
 
   @IsString()
-  @MaxLength(255)  
-  sticker_url!: String;
-
+  @MaxLength(255)
+  sticker_url!: string;
 
   @IsString()
-  @MaxLength(255)  
-  banner_url!: String;
+  @MaxLength(255)
+  banner_url!: string;
 }

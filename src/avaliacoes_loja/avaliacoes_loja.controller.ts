@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { AvaliacoesLojaService } from './avaliacoes_loja.service';
 import { CreateAvaliacoesLojaDto } from './dto/create-avaliacoes_loja.dto';
 import { UpdateAvaliacoesLojaDto } from './dto/update-avaliacoes_loja.dto';
@@ -11,6 +11,7 @@ export class AvaliacoesLojaController {
   create(@Body() createAvaliacoesLojaDto: CreateAvaliacoesLojaDto) {
     return this.avaliacoesLojaService.create(createAvaliacoesLojaDto);
   }
+
 
   @Get()
   findAll() {

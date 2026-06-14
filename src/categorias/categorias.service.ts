@@ -88,6 +88,80 @@ export class CategoriasService {
     return categoriaEncontrada;
   }
 
+  async findOneWithProducts(id: number) {
+  console.log('id recebido:', id) 
+
+  const categoria = await this.prisma.categorias.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      nome: true,
+      categoria_pai_id: true,
+      tipos: {
+        select: {
+          id: true,
+          nome: true,
+        }
+      },
+      produto: {
+        select: {
+          id: true,
+          nome: true,
+          preco: true,
+          imagens: {
+            select: {
+              url_imagem: true,
+              ordem: true,
+            },
+            orderBy: { ordem: 'asc' },
+          }
+        }
+      }
+    }
+  })
+
+  if (!categoria) {
+    throw new NotFoundException("Categoria não encontrada.")
+  }
+
+  const produtosSubcategorias = await this.prisma.produtos.findMany({
+    where: {
+      categoria: {
+        categoria_pai_id: id,  // ← o id já vem como number, não precisa converter
+      }
+    },
+    select: {
+      id: true,
+      nome: true,
+      preco: true,
+      categoria_id: true,
+      imagens: {
+        select: {
+          url_imagem: true,
+          ordem: true,
+        },
+        orderBy: { ordem: 'asc' },
+      }
+    }
+  })
+
+  return {
+    ...categoria,
+    todosOsProdutos: [
+      ...categoria.produto,
+      ...produtosSubcategorias,
+    ]
+  }
+}
+  
+  async findRootCategories() {
+    return await this.prisma.categorias.findMany({
+      where: {categoria_pai_id: null },
+      select: {nome: true, id: true},
+    });
+  }
+  //encontra categorias sem pai, para que apenas elas apareçam na tela de feed principal
+
   async update(id: number, updateCategoriaDto: UpdateCategoriaDto) {
     // primeiro, verifica se a categoria existe, usando a função findOne que eu criei (já tem código de erro)
      await this.findOne(id);

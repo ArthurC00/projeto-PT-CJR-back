@@ -4,9 +4,24 @@ import {
   IsNumber,
   IsString,
   MaxLength,
+  IsArray,
+  IsOptional,
+  ValidateNested,
   IsOptional,
   IsArray,
 } from 'class-validator';
+import { Type } from 'class-transformer';
+
+class ImagemDto {
+  @IsString()
+  @IsNotEmpty()
+  url_imagem!: string;
+
+  @IsInt()
+  @IsNotEmpty()
+  ordem!: number;
+}
+
 import { Type } from 'class-transformer';
 
 export class CreateProdutoDto {
@@ -43,6 +58,7 @@ export class CreateProdutoDto {
 
   @IsArray()
   @IsOptional()
-  @IsString({ each: true })
-  imagens?: string[];
+  @ValidateNested({ each: true })
+  @Type(() => ImagemDto)
+  imagens?: ImagemDto[];
 }
