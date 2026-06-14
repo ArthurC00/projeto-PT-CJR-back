@@ -24,9 +24,9 @@ export class AuthService {
     const payload = {
       userId: user.id,
       nome: user.nome,
-      emai: user.email,
+      email: user.email,
       username: user.username,
-      foto_perful_url: user.foto_perfil_url,
+      foto_perfil_url: user.foto_perfil_url,
     };
 
     return {

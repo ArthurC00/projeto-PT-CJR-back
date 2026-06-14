@@ -6,20 +6,23 @@ import { PrismaService } from '../../prisma/prisma.service';
 @Injectable()
 export class LojasService {
   constructor(private prisma: PrismaService) {}
-  
-  async create(createLojaDto: CreateLojaDto) {
-    const { nome, descricao, logo_url, banner_url, sticker_url, ...LojaInfo} = createLojaDto;
-    const lojaExiste = await this.prisma.lojas.findFirst({
-      where: {nome},
-    })
 
-    if (lojaExiste) {throw new BadRequestException(`A loja já existe!`)}
+  async create(createLojaDto: CreateLojaDto) {
+    const { nome, descricao, logo_url, banner_url, sticker_url, ...LojaInfo } =
+      createLojaDto;
+    const lojaExiste = await this.prisma.lojas.findFirst({
+      where: { nome },
+    });
+
+    if (lojaExiste) {
+      throw new BadRequestException(`A loja já existe!`);
+    }
 
     return await this.prisma.lojas.create({
       data: {
         ...createLojaDto,
       },
-      select: {createdAt: true},
+      select: { createdAt: true },
     });
   }
 
@@ -29,7 +32,7 @@ export class LojasService {
         nome: true,
         descricao: true,
         logo_url: true,
-        banner_url: true
+        banner_url: true,
       },
     });
   }
@@ -41,7 +44,7 @@ export class LojasService {
         nome: true,
         descricao: true,
         logo_url: true,
-        banner_url: true
+        banner_url: true,
       },
     });
   }

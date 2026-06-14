@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProdutoDto } from './dto/create-produto.dto';
 import { UpdateProdutoDto } from './dto/update-produto.dto';
 import { PrismaService } from '../../prisma/prisma.service';
@@ -7,31 +7,33 @@ import { PrismaService } from '../../prisma/prisma.service';
 export class ProdutoService {
   constructor(private readonly prisma: PrismaService) {}
 
- async create(createProdutoDto: CreateProdutoDto) {
-  console.log(createProdutoDto)
-  const { imagens, ...dadosProduto } = createProdutoDto
+  async create(createProdutoDto: CreateProdutoDto) {
+    console.log(createProdutoDto);
+    const { imagens, ...dadosProduto } = createProdutoDto;
 
-  return await this.prisma.produtos.create({
-    data: {
-      nome: dadosProduto.nome,
-      loja_id: dadosProduto.loja_id,
-      categoria_id: dadosProduto.categoria_id,
-      estoque: dadosProduto.estoque,
-      preco: dadosProduto.preco,
-      descricao: dadosProduto.descricao,
-      imagens: imagens ? {
-        create: imagens.map((img) => ({
-          url_imagem: img.url_imagem,
-          ordem: img.ordem,
-        }))
-      } : undefined
-    },
-    select: { createdAt: true },
-  })
-}
+    return await this.prisma.produtos.create({
+      data: {
+        nome: dadosProduto.nome,
+        loja_id: dadosProduto.loja_id,
+        categoria_id: dadosProduto.categoria_id,
+        estoque: dadosProduto.estoque,
+        preco: dadosProduto.preco,
+        descricao: dadosProduto.descricao,
+        imagens: imagens
+          ? {
+              create: imagens.map((img) => ({
+                url_imagem: img.url_imagem,
+                ordem: img.ordem,
+              })),
+            }
+          : undefined,
+      },
+      select: { createdAt: true },
+    });
+  }
 
   async findAll() {
-    const produto = await this.prisma.produtos.findMany({
+    return await this.prisma.produtos.findMany({
       select: {
         id: true,
         nome: true,
@@ -44,18 +46,17 @@ export class ProdutoService {
           select: {
             id: true,
             nome: true,
-          }
+          },
         },
-        imagens: {          
-        select: {
-          url_imagem: true,
-          ordem: true,
-        },
-        orderBy: { ordem: 'asc' },  
+        imagens: {
+          select: {
+            url_imagem: true,
+            ordem: true,
+          },
+          orderBy: { ordem: 'asc' },
         },
       },
     });
-    return produto;
   }
 
   async findOne(id: number) {
@@ -73,21 +74,26 @@ export class ProdutoService {
           select: {
             id: true,
             nome: true,
-          }
+          },
         },
         imagens: {
           select: {
-          url_imagem: true,
-          ordem: true,
+            url_imagem: true,
+            ordem: true,
           },
           orderBy: { ordem: 'asc' },
         },
       },
     });
+
+    if (!produto) {
+      throw new NotFoundException(`Produto com ID ${id} não encontrado.`);
+    }
+
     return produto;
   }
 
-    async searchProducts(query: string) {
+  async searchProducts(query: string) {
     if (!query || query.trim() === '') return [];
 
     return this.prisma.produtos.findMany({
@@ -97,7 +103,7 @@ export class ProdutoService {
           { descricao: { contains: query, mode: 'insensitive' } },
         ],
       },
-      take: 20, 
+      take: 20,
       orderBy: { nome: 'asc' },
     });
   }
@@ -108,32 +114,35 @@ export class ProdutoService {
       throw new Error();
     }
 
-    const { imagens, ...dadosProduto } = updateProdutoDto
+    const { imagens, ...dadosProduto } = updateProdutoDto;
 
     return await this.prisma.produtos.update({
       where: { id },
-      data: { 
+      data: {
         nome: dadosProduto.nome,
-      loja_id: dadosProduto.loja_id,
-      categoria_id: dadosProduto.categoria_id,
-      estoque: dadosProduto.estoque,
-      preco: dadosProduto.preco,
-      descricao: dadosProduto.descricao,
-        imagens: imagens ? {
-          deleteMany: {},
-          create: imagens.map((img) => ({
-          url_imagem: img.url_imagem,
-          ordem: img.ordem,
-          }))
-        }: undefined 
+        loja_id: dadosProduto.loja_id,
+        categoria_id: dadosProduto.categoria_id,
+        estoque: dadosProduto.estoque,
+        preco: dadosProduto.preco,
+        descricao: dadosProduto.descricao,
+        imagens: imagens
+          ? {
+              deleteMany: {},
+              create: imagens.map((img) => ({
+                url_imagem: img.url_imagem,
+                ordem: img.ordem,
+              })),
+            }
+          : undefined,
       },
     });
   }
 
   async remove(id: number) {
-    const produto = this.findOne(id);
+    const produto = await this.findOne(id);
+
     if (!produto) {
-      throw new Error();
+      throw new NotFoundException(`Produto com ID ${id} não encontrado.`);
     }
 
     return await this.prisma.produtos.delete({

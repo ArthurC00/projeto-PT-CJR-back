@@ -1,3 +1,4 @@
+
 import {
   Controller,
   Get,
@@ -37,7 +38,8 @@ export class UsuariosController {
   async update(
     @Param('id') id: string,
     @Body() updateUsuarioDto: UpdateUsuarioDto,
-  ) {
+  ) 
+  {
     return this.usuariosService.update(+id, updateUsuarioDto);
   }
 

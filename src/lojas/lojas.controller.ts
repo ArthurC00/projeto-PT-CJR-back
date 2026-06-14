@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { LojasService } from './lojas.service';
 import { CreateLojaDto } from './dto/create-loja.dto';
 import { UpdateLojaDto } from './dto/update-loja.dto';
@@ -7,7 +15,7 @@ import { UpdateLojaDto } from './dto/update-loja.dto';
 export class LojasController {
   constructor(private readonly lojasService: LojasService) {}
 
-  @Post()
+  @Post('/criar')
   create(@Body() createLojaDto: CreateLojaDto) {
     return this.lojasService.create(createLojaDto);
   }
@@ -23,7 +31,7 @@ export class LojasController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateLojaDto: UpdateLojaDto) {
+  async update(@Param('id') id: string, @Body() updateLojaDto: UpdateLojaDto) {
     return this.lojasService.update(+id, updateLojaDto);
   }
 
