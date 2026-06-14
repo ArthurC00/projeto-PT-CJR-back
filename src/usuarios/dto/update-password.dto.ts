@@ -1,8 +1,6 @@
 import { IsNotEmpty, IsString, MinLength } from "class-validator";
 
-
 export class UpdatePasswordDto {
-
     @IsString()
     @IsNotEmpty()
     senha_atual!: string;
