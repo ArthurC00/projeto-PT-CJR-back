@@ -1,30 +1,48 @@
-import { IsInt, IsNotEmpty, IsNumber, IsString, MaxLength } from 'class-validator';
+import {
+  IsInt,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  MaxLength,
+  IsOptional,
+  IsArray,
+} from 'class-validator';
+import { Type } from 'class-transformer';
+
 export class CreateProdutoDto {
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(255, {
+    message: 'O nome do produto pode ter no máximo 255 caracteres',
+  })
+  nome!: string;
 
-@IsString()
-@IsNotEmpty()
-@MaxLength(50, {message: 'O nome da loja pode ter no máximo 50 caracteres' })
-nome!: string;
+  @IsInt()
+  @IsNotEmpty()
+  @Type(() => Number)
+  loja_id!: number;
 
-@IsInt()
-@IsNotEmpty()
-loja_id!: number;
+  @IsInt()
+  @IsNotEmpty()
+  @Type(() => Number)
+  categoria_id!: number;
 
-@IsInt()
-@IsNotEmpty()
-categoria_id!: number;
+  @IsInt()
+  @IsNotEmpty()
+  @Type(() => Number)
+  estoque!: number;
 
-@IsInt()
-@IsNotEmpty()
-estoque!: number;
+  @IsNumber()
+  @IsNotEmpty()
+  @Type(() => Number)
+  preco!: number;
 
-@IsNumber()
-@IsNotEmpty()
-preco!: number;
+  @IsString()
+  @IsNotEmpty()
+  descricao!: string;
 
-@IsString()
-@IsNotEmpty()
-@MaxLength(255, {message: 'O preço da loja pode ter no máximo 255 caracteres' })
-descricao!: string;
-
+  @IsArray()
+  @IsOptional()
+  @IsString({ each: true })
+  imagens?: string[];
 }
