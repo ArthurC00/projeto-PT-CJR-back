@@ -13,6 +13,7 @@ import { UsuariosService } from './usuarios.service';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { UpdatePasswordDto } from './dto/update-password.dto';
 
 @Controller('usuarios')
 export class UsuariosController {
@@ -42,9 +43,19 @@ export class UsuariosController {
     return this.usuariosService.update(+id, updateUsuarioDto);
   }
 
+  @Patch(':id/password')
+  @UseGuards(AuthGuard('jwt'))
+  async updatePassword(
+    @Param('id') id: string,
+    @Body() updatePasswordDto: UpdatePasswordDto,
+  ) {
+    return await this.usuariosService.updatePassword(+id, updatePasswordDto);
+  }
+
   @Delete(':id')
   @UseGuards(AuthGuard('jwt'))
   remove(@Param('id') id: string) {
     return this.usuariosService.remove(+id);
   }
+  
 }
