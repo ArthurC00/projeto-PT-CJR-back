@@ -23,6 +23,7 @@ import { PrismaService } from '../prisma/prisma.service';
     ComentariosAvaliacaoModule,
     ImagensProdutoModule,
     LojasModule,
+    LojasModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],

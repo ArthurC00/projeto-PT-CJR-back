@@ -24,15 +24,23 @@ export class CategoriasController {
   }
 
   @Get()
-  @UseGuards(AuthGuard('jwt'))
   async findAll() {
     return await this.categoriasService.findAll();
   }
 
+  @Get('raiz')
+  async findRootCategories () {
+    return await this.categoriasService.findRootCategories();
+  }
+
   @Get(':id')
-  @UseGuards(AuthGuard('jwt'))
   async findOne(@Param('id') id: string) {
     return await this.categoriasService.findOne(+id);
+  }
+
+  @Get(':id/produtos')
+  async findOneWithProducts(@Param('id') id: string) {
+    return await this.categoriasService.findOneWithProducts(+id);
   }
 
   @Patch(':id')

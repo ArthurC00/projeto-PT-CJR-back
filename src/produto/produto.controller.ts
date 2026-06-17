@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
   UseInterceptors,
   UploadedFiles,
 } from '@nestjs/common';
@@ -38,13 +39,20 @@ export class ProdutoController {
     @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
     if (files && files.length > 0) {
-      const imagensUrls = files.map(
-        (file) => `http://localhost:3001/uploads/${file.filename}`,
-      );
-      createProdutoDto.imagens = imagensUrls;
+      const imagensFormatadas = files.map((file, index) => ({
+        url_imagem: `http://localhost:3001/uploads/${file.filename}`,
+        ordem: index + 1,
+      }));
+
+      createProdutoDto.imagens = imagensFormatadas;
     }
 
     return this.produtoService.create(createProdutoDto);
+  }
+
+  @Get('search')
+  search(@Query('q') query: string) {
+    return this.produtoService.searchProducts(query);
   }
 
   @Get()

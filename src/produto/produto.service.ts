@@ -8,22 +8,25 @@ export class ProdutoService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createProdutoDto: CreateProdutoDto) {
-    const { imagens, ...produtoData } = createProdutoDto;
+    console.log(createProdutoDto);
+    const { imagens, ...dadosProduto } = createProdutoDto;
 
     return await this.prisma.produtos.create({
       data: {
-        ...produtoData, // Passa os campos normais
-
-        ...(imagens && imagens.length > 0
+        nome: dadosProduto.nome,
+        loja_id: dadosProduto.loja_id,
+        categoria_id: dadosProduto.categoria_id,
+        estoque: dadosProduto.estoque,
+        preco: dadosProduto.preco,
+        descricao: dadosProduto.descricao,
+        imagens: imagens
           ? {
-              imagens: {
-                create: imagens.map((url, index) => ({
-                  url_imagem: url,
-                  ordem: index + 1,
-                })),
-              },
+              create: imagens.map((img) => ({
+                url_imagem: img.url_imagem,
+                ordem: img.ordem,
+              })),
             }
-          : {}),
+          : undefined,
       },
       select: { createdAt: true },
     });
@@ -39,13 +42,18 @@ export class ProdutoService {
         descricao: true,
         loja_id: true,
         categoria_id: true,
-        imagens: {
-          orderBy: { ordem: 'asc' },
+        categoria: {
           select: {
             id: true,
+            nome: true,
+          },
+        },
+        imagens: {
+          select: {
             url_imagem: true,
             ordem: true,
           },
+          orderBy: { ordem: 'asc' },
         },
       },
     });
@@ -64,16 +72,16 @@ export class ProdutoService {
         categoria_id: true,
         categoria: {
           select: {
+            id: true,
             nome: true,
           },
         },
         imagens: {
-          orderBy: { ordem: 'asc' },
           select: {
-            id: true,
             url_imagem: true,
             ordem: true,
           },
+          orderBy: { ordem: 'asc' },
         },
       },
     });
@@ -85,24 +93,47 @@ export class ProdutoService {
     return produto;
   }
 
+  async searchProducts(query: string) {
+    if (!query || query.trim() === '') return [];
+
+    return this.prisma.produtos.findMany({
+      where: {
+        OR: [
+          { nome: { contains: query, mode: 'insensitive' } },
+          { descricao: { contains: query, mode: 'insensitive' } },
+        ],
+      },
+      take: 20,
+      orderBy: { nome: 'asc' },
+    });
+  }
+
   async update(id: number, updateProdutoDto: UpdateProdutoDto) {
-    const { imagens, ...produtoData } = updateProdutoDto;
+    const produto = this.findOne(id);
+    if (!produto) {
+      throw new Error();
+    }
+
+    const { imagens, ...dadosProduto } = updateProdutoDto;
 
     return await this.prisma.produtos.update({
       where: { id },
       data: {
-        ...produtoData,
-        ...(imagens
+        nome: dadosProduto.nome,
+        loja_id: dadosProduto.loja_id,
+        categoria_id: dadosProduto.categoria_id,
+        estoque: dadosProduto.estoque,
+        preco: dadosProduto.preco,
+        descricao: dadosProduto.descricao,
+        imagens: imagens
           ? {
-              imagens: {
-                deleteMany: {},
-                create: imagens.map((url, index) => ({
-                  url_imagem: url,
-                  ordem: index + 1,
-                })),
-              },
+              deleteMany: {},
+              create: imagens.map((img) => ({
+                url_imagem: img.url_imagem,
+                ordem: img.ordem,
+              })),
             }
-          : {}),
+          : undefined,
       },
     });
   }
