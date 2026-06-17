@@ -8,6 +8,8 @@ import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../../prisma/prisma.service';
 import { error } from 'console';
+import { UpdatePasswordDto } from './dto/update-password.dto';
+import { userInfo } from 'os';
 
 @Injectable()
 export class UsuariosService {
@@ -99,5 +101,35 @@ export class UsuariosService {
       throw new BadRequestException('Id inválido! O usuário não existe');
 
     return this.prisma.usuario.delete({ where: { id } });
+  }
+
+  async updatePassword(id: number, updatePasswordDto: UpdatePasswordDto) {
+    const { senha_atual, nova_senha } = updatePasswordDto;
+
+    // procura o usuário pelo ID e retorna um erro se não encontrar
+    const usuario = await this.prisma.usuario.findUnique({
+      where: { id },
+    });
+
+    if (!usuario) {
+      throw new BadRequestException('Usuário não encontrado');
+    }
+
+    // verifica se a senha antiga que o usuário digitou está correta
+    const senhaCorreta = await bcrypt.compare(senha_atual, usuario.senha_hash);
+
+    if (!senhaCorreta) {
+      throw new BadRequestException('Senha antiga incorreta.')
+    }
+
+    // criptografa a nova senha
+    const novaSenhaHash = await bcrypt.hash(nova_senha, 10);
+
+    // atualiza a senha criptografada no banco de dados
+    return await this.prisma.usuario.update({
+      where: { id },
+      data: { senha_hash: novaSenhaHash },
+      select: { id: true, nome: true, email: true } // não retorna a senha por motivos de segurança
+    })
   }
 }
