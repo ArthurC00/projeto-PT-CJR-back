@@ -23,6 +23,15 @@ export class AvaliacoesLojaService {
   async findOne(id: number) {
     const avaliacao = await this.prisma.avaliacoes_loja.findUnique({
       where: { id },
+      include: {
+        usuario: {
+          select: {
+            nome: true,
+            foto_perfil_url: true,
+          },
+        },
+        loja: { select: { nome: true } },
+      },
     });
     if (!avaliacao) {
       throw new NotFoundException(`Avaliação com o ID ${id} não encontrada.`);
@@ -56,7 +65,6 @@ export class AvaliacoesLojaService {
         createdAt: 'desc',
       },
     });
-    console.log(avaliacoes);
     return avaliacoes;
   }
 

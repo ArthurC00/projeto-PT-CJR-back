@@ -63,6 +63,13 @@ export class LojasService {
         descricao: true,
         logo_url: true,
         banner_url: true,
+        usuario: {
+          select: {
+            id: true,
+            nome: true,
+            foto_perfil_url: true,
+          },
+        },
       },
     });
     if (!lojaExiste) {

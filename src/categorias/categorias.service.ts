@@ -1,44 +1,50 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateCategoriaDto } from './dto/create-categoria.dto';
 import { UpdateCategoriaDto } from './dto/update-categoria.dto';
 import { PrismaService } from '../../prisma/prisma.service';
 
 @Injectable()
 export class CategoriasService {
-  // implementar as funções aqui
-
-  constructor(private readonly prisma:PrismaService){}
+  constructor(private readonly prisma: PrismaService) {}
 
   async create(createCategoriaDto: CreateCategoriaDto) {
-    const {nome, categoria_pai_id}  = createCategoriaDto;
+    const { nome, categoria_pai_id } = createCategoriaDto;
 
     const categoriaExiste = await this.prisma.categorias.findFirst({
       where: { nome },
     });
 
-    if(categoriaExiste){throw new BadRequestException(`A categoria "${nome}" já existe!`)}
+    if (categoriaExiste) {
+      throw new BadRequestException(`A categoria "${nome}" já existe!`);
+    }
     // alterei a mensagem para mostrar o nome da categoria que já existe
 
     if (categoria_pai_id) {
       // só executa se o usuário tiver enviado um ID de categoria pai (que é opcional)
-      
+
       const paiExiste = await this.prisma.categorias.findUnique({
         // checa se a categoria pai enviada existe
-        where: { id: categoria_pai_id}
+        where: { id: categoria_pai_id },
       });
 
       if (!paiExiste) {
         // se o usuário forneceu uma categoria pai e ela não existe, envia uma mensagem de erro
-        throw new BadRequestException("A categoria pai especificada não existe.")
+        throw new BadRequestException(
+          'A categoria pai especificada não existe.',
+        );
       }
 
       // se uma categoria pai foi fornecida e ela existe, cria a nova categoria como filha dela
       return this.prisma.categorias.create({
         data: { nome, categoria_pai_id },
-        select: { id: true, nome: true, categoria_pai_id: true }
+        select: { id: true, nome: true, categoria_pai_id: true },
         // o select define os dados a serem retornados pelo banco após a criação ou busca de alguma coisa
       });
-    /*}
+      /*}
     const temPai = await this.prisma.categorias.findFirst({
       where: {categoria_pai_id}
     })
@@ -61,114 +67,110 @@ export class CategoriasService {
       // se um ID de categoria pai não foi fornecido, cria a categoria como principal (não é filha de nenhuma outra)
       return this.prisma.categorias.create({
         data: { nome },
-        select: { id: true, nome: true }
+        select: { id: true, nome: true },
         // o select define os dados a serem retornados pelo banco após a criação ou busca de alguma coisa
       });
     }
-  
   }
 
   async findAll() {
     // retorna um array com todas as categorias existentes no banco de dados
     // o método assíncrono (async) é necessário porque a função precisa buscar no banco de dados
-    return  await this.prisma.categorias.findMany();
+    return await this.prisma.categorias.findMany();
     // o await faz com que a função espere a resposta do banco de dados antes de retornar os resultados da busca
   }
 
   async findOne(id: number) {
     // procura por uma categoria com o ID fornecido
     const categoriaEncontrada = await this.prisma.categorias.findUnique({
-      where: { id }
+      where: { id },
     });
     if (!categoriaEncontrada) {
       // se não encontrar, mostra uma mensagem de erro
-      throw new NotFoundException("Categoria não encontrada.")
+      throw new NotFoundException('Categoria não encontrada.');
     }
     // se encontrar, retorna a categoria encontrada
     return categoriaEncontrada;
   }
 
   async findOneWithProducts(id: number) {
-  console.log('id recebido:', id) 
+    console.log('id recebido:', id);
 
-  const categoria = await this.prisma.categorias.findUnique({
-    where: { id },
-    select: {
-      id: true,
-      nome: true,
-      categoria_pai_id: true,
-      tipos: {
-        select: {
-          id: true,
-          nome: true,
-        }
-      },
-      produto: {
-        select: {
-          id: true,
-          nome: true,
-          preco: true,
-          imagens: {
-            select: {
-              url_imagem: true,
-              ordem: true,
-            },
-            orderBy: { ordem: 'asc' },
-          }
-        }
-      }
-    }
-  })
-
-  if (!categoria) {
-    throw new NotFoundException("Categoria não encontrada.")
-  }
-
-  const produtosSubcategorias = await this.prisma.produtos.findMany({
-    where: {
-      categoria: {
-        categoria_pai_id: id,  // ← o id já vem como number, não precisa converter
-      }
-    },
-    select: {
-      id: true,
-      nome: true,
-      preco: true,
-      categoria_id: true,
-      imagens: {
-        select: {
-          url_imagem: true,
-          ordem: true,
+    const categoria = await this.prisma.categorias.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        nome: true,
+        categoria_pai_id: true,
+        tipos: {
+          select: {
+            id: true,
+            nome: true,
+          },
         },
-        orderBy: { ordem: 'asc' },
-      }
-    }
-  })
+        produto: {
+          select: {
+            id: true,
+            nome: true,
+            preco: true,
+            imagens: {
+              select: {
+                url_imagem: true,
+                ordem: true,
+              },
+              orderBy: { ordem: 'asc' },
+            },
+          },
+        },
+      },
+    });
 
-  return {
-    ...categoria,
-    todosOsProdutos: [
-      ...categoria.produto,
-      ...produtosSubcategorias,
-    ]
+    if (!categoria) {
+      throw new NotFoundException('Categoria não encontrada.');
+    }
+
+    const produtosSubcategorias = await this.prisma.produtos.findMany({
+      where: {
+        categoria: {
+          categoria_pai_id: id, // ← o id já vem como number, não precisa converter
+        },
+      },
+      select: {
+        id: true,
+        nome: true,
+        preco: true,
+        categoria_id: true,
+        imagens: {
+          select: {
+            url_imagem: true,
+            ordem: true,
+          },
+          orderBy: { ordem: 'asc' },
+        },
+      },
+    });
+
+    return {
+      ...categoria,
+      todosOsProdutos: [...categoria.produto, ...produtosSubcategorias],
+    };
   }
-}
-  
+
   async findRootCategories() {
     return await this.prisma.categorias.findMany({
-      where: {categoria_pai_id: null },
-      select: {nome: true, id: true},
+      where: { categoria_pai_id: null },
+      select: { nome: true, id: true },
     });
   }
   //encontra categorias sem pai, para que apenas elas apareçam na tela de feed principal
 
   async update(id: number, updateCategoriaDto: UpdateCategoriaDto) {
     // primeiro, verifica se a categoria existe, usando a função findOne que eu criei (já tem código de erro)
-     await this.findOne(id);
+    await this.findOne(id);
 
     return await this.prisma.categorias.update({
       where: { id },
-      data: { ...updateCategoriaDto }
+      data: { ...updateCategoriaDto },
       // os três pontos dizem ao JavaScript para "descompactar" o DTO e usar as informações que ele contém como data
     });
   }
@@ -178,7 +180,7 @@ export class CategoriasService {
     await this.findOne(id);
     // deleta a categoria com o id especificado
     return await this.prisma.categorias.delete({
-      where: { id }
+      where: { id },
     });
   }
 }
