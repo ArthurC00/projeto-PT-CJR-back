@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateLojaDto } from './dto/create-loja.dto';
 import { UpdateLojaDto } from './dto/update-loja.dto';
 import { PrismaService } from '../../prisma/prisma.service';
+import { NotFoundError } from 'rxjs';
 
 @Injectable()
 export class LojasService {
@@ -26,6 +27,22 @@ export class LojasService {
     });
   }
 
+  async findAllByUsuario(usuarioId: number) {
+    return await this.prisma.lojas.findMany({
+      where: {
+        usuario_id: usuarioId,
+      },
+      select: {
+        id: true,
+        nome: true,
+        descricao: true,
+        logo_url: true,
+        banner_url: true,
+        sticker_url: true,
+      },
+    });
+  }
+
   async findAll() {
     return await this.prisma.lojas.findMany({
       select: {
@@ -41,12 +58,18 @@ export class LojasService {
     const lojaExiste = await this.prisma.lojas.findUnique({
       where: { id },
       select: {
+        id: true,
         nome: true,
         descricao: true,
         logo_url: true,
         banner_url: true,
       },
     });
+    if (!lojaExiste) {
+      throw new NotFoundError(`Loja ${id} não existe`);
+    }
+
+    return lojaExiste;
   }
 
   update(id: number, updateLojaDto: UpdateLojaDto) {

@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { AvaliacoesLojaService } from './avaliacoes_loja.service';
 import { CreateAvaliacoesLojaDto } from './dto/create-avaliacoes_loja.dto';
 import { UpdateAvaliacoesLojaDto } from './dto/update-avaliacoes_loja.dto';
@@ -12,7 +21,6 @@ export class AvaliacoesLojaController {
     return this.avaliacoesLojaService.create(createAvaliacoesLojaDto);
   }
 
-
   @Get()
   findAll() {
     return this.avaliacoesLojaService.findAll();
@@ -23,8 +31,16 @@ export class AvaliacoesLojaController {
     return this.avaliacoesLojaService.findOne(+id);
   }
 
+  @Get('loja/:lojaId')
+  findAllByLoja(@Param('lojaId') lojaId: string) {
+    return this.avaliacoesLojaService.findAllByLoja(+lojaId);
+  }
+
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAvaliacoesLojaDto: UpdateAvaliacoesLojaDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateAvaliacoesLojaDto: UpdateAvaliacoesLojaDto,
+  ) {
     return this.avaliacoesLojaService.update(+id, updateAvaliacoesLojaDto);
   }
 

@@ -59,6 +59,43 @@ export class ProdutoService {
     });
   }
 
+  async findAllByUsuario(usuarioId: number) {
+    return await this.prisma.produtos.findMany({
+      where: {
+        loja: {
+          usuario_id: usuarioId,
+        },
+      },
+      select: {
+        id: true,
+        nome: true,
+        preco: true,
+        estoque: true,
+        descricao: true,
+        loja_id: true,
+        categoria_id: true,
+        loja: {
+          select: {
+            banner_url: true,
+          },
+        },
+        categoria: {
+          select: {
+            id: true,
+            nome: true,
+          },
+        },
+        imagens: {
+          select: {
+            url_imagem: true,
+            ordem: true,
+          },
+          orderBy: { ordem: 'asc' },
+        },
+      },
+    });
+  }
+
   async findOne(id: number) {
     const produto = await this.prisma.produtos.findUnique({
       where: { id },
@@ -109,7 +146,7 @@ export class ProdutoService {
   }
 
   async update(id: number, updateProdutoDto: UpdateProdutoDto) {
-    const produto = this.findOne(id);
+    const produto = await this.findOne(id);
     if (!produto) {
       throw new Error();
     }

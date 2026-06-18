@@ -9,6 +9,7 @@ import {
   Query,
   UseInterceptors,
   UploadedFiles,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -98,6 +99,11 @@ export class ProdutoController {
     updateProdutoDto.estoque = Number(updateProdutoDto.estoque);
 
     return this.produtoService.update(+id, updateProdutoDto);
+  }
+
+  @Get('usuario/:usuarioId')
+  findAllByUsuario(@Param('usuarioId', ParseIntPipe) usuarioId: number) {
+    return this.produtoService.findAllByUsuario(usuarioId);
   }
 
   @Delete(':id')
