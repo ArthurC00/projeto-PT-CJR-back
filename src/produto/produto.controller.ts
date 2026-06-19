@@ -61,6 +61,11 @@ export class ProdutoController {
     return this.produtoService.findAll();
   }
 
+  @Get('/loja/:id')
+  findAllByLoja(@Param('id') lojaId: string) {
+    return this.produtoService.findAllByLoja(+lojaId);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.produtoService.findOne(+id);

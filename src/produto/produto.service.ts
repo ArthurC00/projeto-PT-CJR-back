@@ -42,6 +42,7 @@ export class ProdutoService {
         descricao: true,
         loja_id: true,
         categoria_id: true,
+        avaliacoes: true,
         categoria: {
           select: {
             id: true,
@@ -74,11 +75,49 @@ export class ProdutoService {
         descricao: true,
         loja_id: true,
         categoria_id: true,
+        avaliacoes: true,
+
         loja: {
           select: {
             banner_url: true,
           },
         },
+        categoria: {
+          select: {
+            id: true,
+            nome: true,
+          },
+        },
+        imagens: {
+          select: {
+            url_imagem: true,
+            ordem: true,
+          },
+          orderBy: { ordem: 'asc' },
+        },
+      },
+    });
+  }
+
+  async findAllByLoja(lojaId: number) {
+    return await this.prisma.produtos.findMany({
+      where: {
+        loja_id: lojaId,
+      },
+      select: {
+        id: true,
+        nome: true,
+        preco: true,
+        estoque: true,
+        descricao: true,
+        loja_id: true,
+        categoria_id: true,
+        loja: {
+          select: {
+            banner_url: true,
+          },
+        },
+        avaliacoes: true,
         categoria: {
           select: {
             id: true,
@@ -107,6 +146,7 @@ export class ProdutoService {
         descricao: true,
         loja_id: true,
         categoria_id: true,
+        avaliacoes: true,
         loja: {
           select: { usuario_id: true, banner_url: true },
         },
