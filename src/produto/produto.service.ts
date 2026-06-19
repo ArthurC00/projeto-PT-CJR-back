@@ -107,6 +107,9 @@ export class ProdutoService {
         descricao: true,
         loja_id: true,
         categoria_id: true,
+        loja: {
+          select: { usuario_id: true, banner_url: true },
+        },
         categoria: {
           select: {
             id: true,
@@ -115,6 +118,7 @@ export class ProdutoService {
         },
         imagens: {
           select: {
+            id: true,
             url_imagem: true,
             ordem: true,
           },
