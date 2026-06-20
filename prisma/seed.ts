@@ -11,7 +11,7 @@ export async function runSeed() {
   await prisma.produtos.deleteMany();
   await prisma.lojas.deleteMany();
   await prisma.usuario.deleteMany();
-  const numberOfUsers = 30;
+  const numberOfUsers = 20;
   await prisma.categorias.updateMany({
     data: { categoria_pai_id: null },
   });
