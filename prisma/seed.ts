@@ -3,7 +3,7 @@ import * as bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
-export async function runSeed() {
+export async function main() {
   await prisma.comentarios_avaliacao.deleteMany();
   await prisma.avaliacoes_loja.deleteMany();
   await prisma.avaliacoes_produto.deleteMany();
@@ -305,3 +305,13 @@ export async function runSeed() {
     }
   }
 }
+
+main()
+  .then(() => {
+    console.log('Seed finalizado com sucesso!');
+    process.exit(0); // IMPORTANTE: avisa que terminou
+  })
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  });

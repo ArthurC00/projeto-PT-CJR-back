@@ -22,8 +22,7 @@
     "db:sync": "npx prisma generate && npx prisma db push",
     "setup": "npm install && npx prisma generate && npx prisma db push",
     "db:studio": "npx prisma studio",
-    "db:seed": "npx prisma db seed",
-    "postdeploy": "npm run db:seed"
+    "seed:run": "ts-node prisma/seed.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
