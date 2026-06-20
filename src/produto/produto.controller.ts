@@ -78,26 +78,36 @@ export class ProdutoController {
     @Body() updateProdutoDto: any,
     @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
-    let urlsFinais: string[] = [];
+    const urls: string[] = [];
 
-    if (updateProdutoDto.imagens_mantidas) {
-      urlsFinais = Array.isArray(updateProdutoDto.imagens_mantidas)
-        ? updateProdutoDto.imagens_mantidas
-        : [updateProdutoDto.imagens_mantidas];
+    const oldImgs = updateProdutoDto.oldImg
+      ? Array.isArray(updateProdutoDto.oldImg)
+        ? updateProdutoDto.oldImg
+        : [updateProdutoDto.oldImg]
+      : [];
+
+    let index = 0;
+
+    for (let i = 0; i < 4; i++) {
+      const fieldName = i === 0 ? 'fotos_principais' : `foto_secundaria_${i}`;
+      const file = files?.find((f) => f.fieldname === fieldName);
+
+      if (file) {
+        urls.push(`http://localhost:3001/uploads/${file.filename}`);
+      } else if (index < oldImgs.length) {
+        urls.push(oldImgs[index]);
+        index++;
+      }
     }
 
-    if (files && files.length > 0) {
-      const novasUrls = files.map(
-        (file) => `http://localhost:3001/uploads/${file.filename}`,
-      );
-      urlsFinais = [...urlsFinais, ...novasUrls];
+    if (urls.length > 0) {
+      updateProdutoDto.imagens = urls.map((url, index) => ({
+        url_imagem: url,
+        ordem: index + 1,
+      }));
     }
 
-    if (urlsFinais.length > 0) {
-      updateProdutoDto.imagens = urlsFinais;
-    }
-
-    delete updateProdutoDto.imagens_mantidas;
+    delete updateProdutoDto.oldImg;
 
     updateProdutoDto.categoria_id = Number(updateProdutoDto.categoria_id);
     updateProdutoDto.preco = Number(updateProdutoDto.preco);

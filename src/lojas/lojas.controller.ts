@@ -17,7 +17,7 @@ import { UpdateLojaDto } from './dto/update-loja.dto';
 export class LojasController {
   constructor(private readonly lojasService: LojasService) {}
 
-  @Post('/criar')
+  @Post()
   create(@Body() createLojaDto: CreateLojaDto) {
     return this.lojasService.create(createLojaDto);
   }
