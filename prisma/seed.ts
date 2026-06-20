@@ -121,7 +121,7 @@ export async function runSeed() {
     'Rocha',
   ];
 
-  for (let i = 0; i < 50; i++) {
+  for (let i = 0; i < 40; i++) {
     const firstName = firstNames[i % firstNames.length];
     const lastName =
       lastNames[Math.floor(i / firstNames.length) % lastNames.length];
@@ -155,7 +155,7 @@ export async function runSeed() {
     'Imports',
   ];
 
-  for (let i = 10; i < 50; i++) {
+  for (let i = 10; i < 40; i++) {
     const dono = usuariosCriados[i];
     const qtdeLojas = (i % 5) + 1;
 
@@ -277,7 +277,7 @@ export async function runSeed() {
     }
   }
 
-  for (let i = 0; i < 50; i++) {
+  for (let i = 0; i < 40; i++) {
     const usuarioComentando = usuariosCriados[i];
 
     if (i % 2 === 0) {
