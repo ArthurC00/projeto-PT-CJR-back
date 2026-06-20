@@ -39,7 +39,8 @@ export class ImagensProdutoController {
     @Param('produto_id', ParseIntPipe) produto_id: number,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    const urlLocal = `http://localhost:3001/uploads/${file.filename}`;
+    const baseUrl = process.env.BACKEND_URL || 'http://localhost:3001';
+    const urlLocal = `${baseUrl}/uploads/${file.filename}`;
 
     return this.imagensProdutoService.salvarImagem(produto_id, urlLocal);
   }

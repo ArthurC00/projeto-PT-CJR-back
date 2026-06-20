@@ -94,8 +94,6 @@ export class CategoriasService {
   }
 
   async findOneWithProducts(id: number) {
-    console.log('id recebido:', id);
-
     const categoria = await this.prisma.categorias.findUnique({
       where: { id },
       select: {

@@ -40,8 +40,9 @@ export class ProdutoController {
     @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
     if (files && files.length > 0) {
+      const baseUrl = process.env.BACKEND_URL || 'http://localhost:3001';
       const imagensFormatadas = files.map((file, index) => ({
-        url_imagem: `http://localhost:3001/uploads/${file.filename}`,
+        url_imagem: `${baseUrl}/uploads/${file.filename}`,
         ordem: index + 1,
       }));
 
@@ -88,12 +89,14 @@ export class ProdutoController {
 
     let index = 0;
 
+    const baseUrl = process.env.BACKEND_URL || 'http://localhost:3001';
+
     for (let i = 0; i < 4; i++) {
       const fieldName = i === 0 ? 'fotos_principais' : `foto_secundaria_${i}`;
       const file = files?.find((f) => f.fieldname === fieldName);
 
       if (file) {
-        urls.push(`http://localhost:3001/uploads/${file.filename}`);
+        urls.push(`${baseUrl}/uploads/${file.filename}`);
       } else if (index < oldImgs.length) {
         urls.push(oldImgs[index]);
         index++;

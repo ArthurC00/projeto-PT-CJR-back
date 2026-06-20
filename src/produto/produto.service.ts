@@ -8,7 +8,6 @@ export class ProdutoService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createProdutoDto: CreateProdutoDto) {
-    console.log(createProdutoDto);
     const { imagens, ...dadosProduto } = createProdutoDto;
 
     return await this.prisma.produtos.create({
@@ -43,6 +42,9 @@ export class ProdutoService {
         loja_id: true,
         categoria_id: true,
         avaliacoes: true,
+        loja: {
+          select: { usuario_id: true, banner_url: true },
+        },
         categoria: {
           select: {
             id: true,
