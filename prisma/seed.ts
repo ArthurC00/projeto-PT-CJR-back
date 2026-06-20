@@ -3,7 +3,7 @@ import * as bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
-async function main() {
+export async function runSeed() {
   await prisma.comentarios_avaliacao.deleteMany();
   await prisma.avaliacoes_loja.deleteMany();
   await prisma.avaliacoes_produto.deleteMany();
@@ -305,12 +305,3 @@ async function main() {
     }
   }
 }
-
-main()
-  .catch((e) => {
-    console.error('Erro ao semear o banco de dados:', e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });

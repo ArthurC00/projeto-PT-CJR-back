@@ -4,6 +4,8 @@ import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
+import { PrismaClient } from '@prisma/client';
+import { runSeed } from '../prisma/seed';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -34,6 +36,13 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, documentFactory, {
     jsonDocumentUrl: '/api/json',
   });
+
+  const prisma = new PrismaClient();
+  const count = await prisma.usuario.count();
+  if (count === 0) {
+    console.log('Banco vazio, populando dados...');
+    await runSeed();
+  }
 
   await app.listen(process.env.PORT ?? 3001);
 }
