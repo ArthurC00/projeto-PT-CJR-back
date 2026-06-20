@@ -11,7 +11,7 @@ export async function runSeed() {
   await prisma.produtos.deleteMany();
   await prisma.lojas.deleteMany();
   await prisma.usuario.deleteMany();
-
+  const numberOfUsers = 30;
   await prisma.categorias.updateMany({
     data: { categoria_pai_id: null },
   });
@@ -121,7 +121,7 @@ export async function runSeed() {
     'Rocha',
   ];
 
-  for (let i = 0; i < 40; i++) {
+  for (let i = 0; i < numberOfUsers; i++) {
     const firstName = firstNames[i % firstNames.length];
     const lastName =
       lastNames[Math.floor(i / firstNames.length) % lastNames.length];
@@ -155,7 +155,7 @@ export async function runSeed() {
     'Imports',
   ];
 
-  for (let i = 10; i < 40; i++) {
+  for (let i = 10; i < numberOfUsers; i++) {
     const dono = usuariosCriados[i];
     const qtdeLojas = (i % 5) + 1;
 
@@ -277,7 +277,7 @@ export async function runSeed() {
     }
   }
 
-  for (let i = 0; i < 40; i++) {
+  for (let i = 0; i < numberOfUsers; i++) {
     const usuarioComentando = usuariosCriados[i];
 
     if (i % 2 === 0) {
