@@ -46,6 +46,7 @@ export class LojasService {
   async findAll() {
     return await this.prisma.lojas.findMany({
       select: {
+        id: true,
         nome: true,
         descricao: true,
         logo_url: true,
