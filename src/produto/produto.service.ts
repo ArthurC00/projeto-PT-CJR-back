@@ -8,7 +8,6 @@ export class ProdutoService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createProdutoDto: CreateProdutoDto) {
-    console.log(createProdutoDto);
     const { imagens, ...dadosProduto } = createProdutoDto;
 
     return await this.prisma.produtos.create({
@@ -42,6 +41,85 @@ export class ProdutoService {
         descricao: true,
         loja_id: true,
         categoria_id: true,
+        avaliacoes: true,
+        loja: {
+          select: { usuario_id: true, banner_url: true },
+        },
+        categoria: {
+          select: {
+            id: true,
+            nome: true,
+          },
+        },
+        imagens: {
+          select: {
+            url_imagem: true,
+            ordem: true,
+          },
+          orderBy: { ordem: 'asc' },
+        },
+      },
+    });
+  }
+
+  async findAllByUsuario(usuarioId: number) {
+    return await this.prisma.produtos.findMany({
+      where: {
+        loja: {
+          usuario_id: usuarioId,
+        },
+      },
+      select: {
+        id: true,
+        nome: true,
+        preco: true,
+        estoque: true,
+        descricao: true,
+        loja_id: true,
+        categoria_id: true,
+        avaliacoes: true,
+
+        loja: {
+          select: {
+            banner_url: true,
+          },
+        },
+        categoria: {
+          select: {
+            id: true,
+            nome: true,
+          },
+        },
+        imagens: {
+          select: {
+            url_imagem: true,
+            ordem: true,
+          },
+          orderBy: { ordem: 'asc' },
+        },
+      },
+    });
+  }
+
+  async findAllByLoja(lojaId: number) {
+    return await this.prisma.produtos.findMany({
+      where: {
+        loja_id: lojaId,
+      },
+      select: {
+        id: true,
+        nome: true,
+        preco: true,
+        estoque: true,
+        descricao: true,
+        loja_id: true,
+        categoria_id: true,
+        loja: {
+          select: {
+            banner_url: true,
+          },
+        },
+        avaliacoes: true,
         categoria: {
           select: {
             id: true,
@@ -70,6 +148,10 @@ export class ProdutoService {
         descricao: true,
         loja_id: true,
         categoria_id: true,
+        avaliacoes: true,
+        loja: {
+          select: { usuario_id: true, banner_url: true },
+        },
         categoria: {
           select: {
             id: true,
@@ -78,6 +160,7 @@ export class ProdutoService {
         },
         imagens: {
           select: {
+            id: true,
             url_imagem: true,
             ordem: true,
           },
@@ -109,7 +192,7 @@ export class ProdutoService {
   }
 
   async update(id: number, updateProdutoDto: UpdateProdutoDto) {
-    const produto = this.findOne(id);
+    const produto = await this.findOne(id);
     if (!produto) {
       throw new Error();
     }

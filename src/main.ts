@@ -25,7 +25,7 @@ async function bootstrap() {
     .setTitle('API Router')
     .setDescription('Todas as rotas do projeto')
     .setVersion('1.0')
-    .addServer('http://localhost:3001')
+    .addServer(process.env.BACKEND_URL || 'http://localhost:3001')
     .addBearerAuth()
     .build();
 

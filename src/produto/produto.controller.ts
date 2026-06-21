@@ -9,6 +9,7 @@ import {
   Query,
   UseInterceptors,
   UploadedFiles,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -39,8 +40,9 @@ export class ProdutoController {
     @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
     if (files && files.length > 0) {
+      const baseUrl = process.env.BACKEND_URL || 'http://localhost:3001';
       const imagensFormatadas = files.map((file, index) => ({
-        url_imagem: `http://localhost:3001/uploads/${file.filename}`,
+        url_imagem: `${baseUrl}/uploads/${file.filename}`,
         ordem: index + 1,
       }));
 
@@ -60,6 +62,11 @@ export class ProdutoController {
     return this.produtoService.findAll();
   }
 
+  @Get('/loja/:id')
+  findAllByLoja(@Param('id') lojaId: string) {
+    return this.produtoService.findAllByLoja(+lojaId);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.produtoService.findOne(+id);
@@ -72,32 +79,49 @@ export class ProdutoController {
     @Body() updateProdutoDto: any,
     @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
-    let urlsFinais: string[] = [];
+    const urls: string[] = [];
 
-    if (updateProdutoDto.imagens_mantidas) {
-      urlsFinais = Array.isArray(updateProdutoDto.imagens_mantidas)
-        ? updateProdutoDto.imagens_mantidas
-        : [updateProdutoDto.imagens_mantidas];
+    const oldImgs = updateProdutoDto.oldImg
+      ? Array.isArray(updateProdutoDto.oldImg)
+        ? updateProdutoDto.oldImg
+        : [updateProdutoDto.oldImg]
+      : [];
+
+    let index = 0;
+
+    const baseUrl = process.env.BACKEND_URL || 'http://localhost:3001';
+
+    for (let i = 0; i < 4; i++) {
+      const fieldName = i === 0 ? 'fotos_principais' : `foto_secundaria_${i}`;
+      const file = files?.find((f) => f.fieldname === fieldName);
+
+      if (file) {
+        urls.push(`${baseUrl}/uploads/${file.filename}`);
+      } else if (index < oldImgs.length) {
+        urls.push(oldImgs[index]);
+        index++;
+      }
     }
 
-    if (files && files.length > 0) {
-      const novasUrls = files.map(
-        (file) => `http://localhost:3001/uploads/${file.filename}`,
-      );
-      urlsFinais = [...urlsFinais, ...novasUrls];
+    if (urls.length > 0) {
+      updateProdutoDto.imagens = urls.map((url, index) => ({
+        url_imagem: url,
+        ordem: index + 1,
+      }));
     }
 
-    if (urlsFinais.length > 0) {
-      updateProdutoDto.imagens = urlsFinais;
-    }
-
-    delete updateProdutoDto.imagens_mantidas;
+    delete updateProdutoDto.oldImg;
 
     updateProdutoDto.categoria_id = Number(updateProdutoDto.categoria_id);
     updateProdutoDto.preco = Number(updateProdutoDto.preco);
     updateProdutoDto.estoque = Number(updateProdutoDto.estoque);
 
     return this.produtoService.update(+id, updateProdutoDto);
+  }
+
+  @Get('usuario/:usuarioId')
+  findAllByUsuario(@Param('usuarioId', ParseIntPipe) usuarioId: number) {
+    return this.produtoService.findAllByUsuario(usuarioId);
   }
 
   @Delete(':id')

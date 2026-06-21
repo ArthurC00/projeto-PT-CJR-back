@@ -6,6 +6,8 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { LojasService } from './lojas.service';
 import { CreateLojaDto } from './dto/create-loja.dto';
@@ -15,19 +17,22 @@ import { UpdateLojaDto } from './dto/update-loja.dto';
 export class LojasController {
   constructor(private readonly lojasService: LojasService) {}
 
-  @Post('/criar')
+  @Post()
   create(@Body() createLojaDto: CreateLojaDto) {
     return this.lojasService.create(createLojaDto);
   }
 
   @Get()
-  findAll() {
+  findAll(@Query('usuario_id') usuarioId?: string) {
+    if (usuarioId) {
+      return this.lojasService.findAllByUsuario(Number(usuarioId));
+    }
     return this.lojasService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.lojasService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.lojasService.findOne(id);
   }
 
   @Patch(':id')
