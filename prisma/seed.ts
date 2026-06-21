@@ -211,11 +211,25 @@ export async function main() {
     }
   }
 
-  const imagensData = produtosCriados.map((prod, idx) => ({
-    produto_id: prod.id,
-    url_imagem: `https://picsum.photos/400/400?random=${idx + 200}`,
-    ordem: 1,
-  }));
+  const imagensData: any[] = [];
+  let randomCounter = 200;
+
+  for (const prod of produtosCriados) {
+    const hasPhoto = Math.random() >= 0.05;
+    if (!hasPhoto) {
+      continue;
+    }
+
+    const numPhotos = Math.floor(Math.random() * 4) + 1;
+    for (let o = 1; o <= numPhotos; o++) {
+      imagensData.push({
+        produto_id: prod.id,
+        url_imagem: `https://picsum.photos/400/400?random=${randomCounter++}`,
+        ordem: o,
+      });
+    }
+  }
+
   await prisma.imagens_produto.createMany({
     data: imagensData,
   });
