@@ -112,9 +112,23 @@ export class ProdutoController {
 
     delete updateProdutoDto.oldImg;
 
-    updateProdutoDto.categoria_id = Number(updateProdutoDto.categoria_id);
-    updateProdutoDto.preco = Number(updateProdutoDto.preco);
-    updateProdutoDto.estoque = Number(updateProdutoDto.estoque);
+    if (updateProdutoDto.categoria_id !== undefined) {
+      updateProdutoDto.categoria_id = Number(updateProdutoDto.categoria_id);
+    } else {
+      delete updateProdutoDto.categoria_id;
+    }
+
+    if (updateProdutoDto.preco !== undefined) {
+      updateProdutoDto.preco = Number(updateProdutoDto.preco);
+    } else {
+      delete updateProdutoDto.preco;
+    }
+
+    if (updateProdutoDto.estoque !== undefined) {
+      updateProdutoDto.estoque = Number(updateProdutoDto.estoque);
+    } else {
+      delete updateProdutoDto.estoque;
+    }
 
     return this.produtoService.update(+id, updateProdutoDto);
   }
